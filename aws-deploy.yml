@@ -12,5 +12,5 @@ package:
     - ./**
 
 functions:
-  login-stage1:
-    handler: services.stage1
+  login:
+    handler: services.login

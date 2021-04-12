@@ -1,21 +1,21 @@
 import { auth } from 'wstrade-api';
 
 /**
- * Performs stage 1 of login: send the email and password to wealthsimple
- * trade servers, which will fail because OTP was not provided. This will trigger
- * an OTP dispatch from Wealthsimple trade.
+ * Performs the login workflow for Wealthsimple Trade.
  *
  * @param {*} event 
  * @returns 
  */
-export async function stage1(event) {
-  try {
-    await auth.login(event.email, event.password);
-  } catch {
-    return Promise.reject("Unsuccessful login");
-  }
+export async function login(event) {
 
-  // this should never happen because we aren't specifying OTP yet and the
-  // login will never work.
-  return "Ok";
+  // Append otp if provided to us
+  if (event.otp) {
+    auth.on('otp', event.otp);
+  }
+  
+  // this will fail if OTP was not provided
+  await auth.login(event.email, event.password);
+
+  // Successful login: return the authentication tokens to the user
+  return auth.tokens();
 }
