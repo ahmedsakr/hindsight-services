@@ -1,0 +1,16 @@
+service: hindsight
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  profile: hindsight
+  region: ca-central-1
+  stackName: hindsight-services
+
+package:
+  include:
+    - ./**
+
+functions:
+  login-stage1:
+    handler: services.stage1
