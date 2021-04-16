@@ -4,7 +4,8 @@
   "description": "Backend services for the Hindsight application",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "bundle": "webpack",
+    "aws-configure": "serverless deploy --config aws-deploy.yml"
   },
   "repository": {
     "type": "git",
