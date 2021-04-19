@@ -1,4 +1,4 @@
-import { auth, accounts } from 'wstrade-api';
+import { auth, accounts, quotes } from 'wstrade-api';
 
 export async function insights(event) {
 
@@ -28,5 +28,10 @@ export async function insights(event) {
   return {
     user: await accounts.me(),
     performance,
+    securities: {
+      history: {
+        veqt: await quotes.history('VEQT:TSX', '1y')
+      }
+    }
   };
 }
