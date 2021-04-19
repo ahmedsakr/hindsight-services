@@ -9,13 +9,24 @@ export async function insights(event) {
   // Initialize the auth module with the state we were given by the user
   auth.use(event);
 
-  // Fetch all data we need from Wealthsimple.
-  const data = await Promise.all([
-    accounts.me()
-  ]);
+  // Retrieve all accounts under this Wealthsimple trade account
+  const accs = await accounts.all();
+
+  // Capture performance of all accounts in the past year
+  const performance = {};
+  await Promise.all(
+    Object.keys(accs).map(async (account) => {
+      if (!accs[account]) {
+        return;
+      }
+
+      performance[account] = await accounts.history('1y', accs[account]);
+    })
+  );
 
   // return an object of the Wealthsimple data
   return {
-    user: data[0]
+    user: await accounts.me(),
+    performance,
   };
 }
