@@ -12,7 +12,13 @@ export async function insights(event) {
   // Retrieve all accounts under this Wealthsimple trade account
   const accs = await accounts.all();
 
-  // Capture performance of all accounts since they were opened
+  // Capture performance for all accounts since they were opened
+  // EXCEPT... for crypto, we only capture 1 year.
+  // The data returned by crypto history for 'all' is not consistent with
+  // all other accounts:
+  // - crypto 'all' returns 7-day spaced records from 2018 (even though crypto
+  //   first start being offered end of 2020)
+  // - all other accounts 'all' return 1-day spaced records from when they were opened.
   const performance = {};
   await Promise.all(
     Object.keys(accs).map(async (account) => {
@@ -20,7 +26,8 @@ export async function insights(event) {
         return;
       }
 
-      performance[account] = await accounts.history('all', accs[account]);
+      // Only pull 1 year for crypto due to asymmetric data mentioned above
+      performance[account] = await accounts.history(account === 'crypto' ? '1y' : 'all', accs[account]);
     })
   );
 
