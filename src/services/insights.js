@@ -12,7 +12,7 @@ export async function insights(event) {
   // Retrieve all accounts under this Wealthsimple trade account
   const accs = await accounts.all();
 
-  // Capture performance of all accounts in the past year
+  // Capture performance of all accounts since they were opened
   const performance = {};
   await Promise.all(
     Object.keys(accs).map(async (account) => {
@@ -20,9 +20,21 @@ export async function insights(event) {
         return;
       }
 
-      performance[account] = await accounts.history('1y', accs[account]);
+      performance[account] = await accounts.history('all', accs[account]);
     })
   );
+
+  const securityIntervals = [ '1w', '1m', '3m', '1y', '5y' ];
+  const fetchSecurityQuoteIntervals = async (security) => {
+    const prices = {};
+    await Promise.all(
+      securityIntervals.map(async (interval) => {
+        prices[interval] = await quotes.history(security, interval);
+      }
+    ));
+
+    return prices;
+  }
 
   // return an object of the Wealthsimple data
   return {
@@ -30,7 +42,7 @@ export async function insights(event) {
     performance,
     securities: {
       history: {
-        veqt: await quotes.history('VEQT:TSX', '1y')
+        veqt: await fetchSecurityQuoteIntervals('VEQT:TSX')
       }
     }
   };
