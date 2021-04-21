@@ -46,11 +46,13 @@ export async function insights(event) {
   // return an object of the Wealthsimple data
   return {
     user: await accounts.me(),
+    accounts: accs,
     performance,
     securities: {
       history: {
         veqt: await fetchSecurityQuoteIntervals('VEQT:TSX')
       }
-    }
+    },
+    activities: await accounts.activities({ type: [ 'deposit' ] }),
   };
 }
