@@ -53,6 +53,6 @@ export async function insights(event) {
         veqt: await fetchSecurityQuoteIntervals('VEQT:TSX')
       }
     },
-    activities: await accounts.activities({ type: [ 'deposit', 'institutional_transfer' ] }),
+    activities: await accounts.activities(),
   };
 }
